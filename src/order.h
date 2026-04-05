@@ -1,3 +1,5 @@
+#ifndef ORDER_H
+#define ORDER_H
 
 #include <string>
 #include <chrono>
@@ -9,10 +11,9 @@ using Nanos = std::chrono::nanoseconds;
 
 enum class OrderType{Buy, Sell};
 
-inline std::atomic<uint64_t> uniqueOrderID (0);
+struct Order {
+    static inline std::atomic<uint64_t> uniqueOrderID = 0;
 
-class Order {
-public:
     uint64_t price;
     uint64_t quantity;
     std::string ticker;
@@ -29,5 +30,7 @@ public:
     Order(Order&&) noexcept = default;
     Order& operator=(Order&&) noexcept = default;
 };
+
+#endif
 
 
