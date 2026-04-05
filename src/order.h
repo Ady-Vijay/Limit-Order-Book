@@ -21,6 +21,8 @@ struct Order {
     uint64_t id;
     int64_t timestamp;
 
+    Order() : price(0), quantity(0), ticker(""), type(OrderType::Buy), id(0), timestamp(0) {}
+
     Order(uint64_t p, uint64_t q, std::string t, OrderType ot) : 
         price(p), quantity(q), ticker(std::move(t)), type(ot), id(uniqueOrderID++), timestamp(std::chrono::duration_cast<Nanos>(Clock::now().time_since_epoch()).count()) {}  
 
