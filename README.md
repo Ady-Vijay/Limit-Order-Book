@@ -29,7 +29,7 @@ This is the same architecture used by LMAX and most HFT matching engines.
 
 **Why `std::list` for orders at a price level, not `std::vector`?**
 
-Cancel is O(1) via a stored iterator into the list (`order_book` unordered_map maps order ID → `list::iterator`). `vector::erase` is O(n) due to shifting. Real order books are cancel-heavy — cancel volume routinely exceeds fill volume — so O(1) cancel matters.
+Cancel is O(1) via a stored iterator into the list (`order_book` unordered_map maps order ID → `list::iterator`). `vector::erase` is O(n) due to shifting.
 
 **Why `std::map` for price levels, not `std::unordered_map`?**
 
@@ -37,7 +37,7 @@ Best bid = `rbegin()`, best ask = `begin()` — both O(1). `unordered_map` has n
 
 **Why does the matching engine run single-threaded instead of locking the book?**
 
-Locks on the matching path introduce latency jitter and cache contention. A single-threaded engine with a lock-free input queue has zero synchronization overhead on the hot path. The matching bottleneck stays in the queue, which scales horizontally with producers.
+Locks on the matching path introduce latency jitter. A single-threaded engine with a lock-free input queue has zero synchronization overhead on the hot path. The matching bottleneck stays in the queue, which scales horizontally with producers.
 
 **Why integer prices?**
 
