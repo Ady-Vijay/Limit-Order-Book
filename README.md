@@ -126,3 +126,9 @@ Results on a Windows 10 machine (AMD/Intel, MSVC, Release build):
 ```
 
 The queue scales near-linearly with producers. The matching engine itself is the throughput ceiling at ~2.7M matches/sec single-threaded; the queue peaks at 45M ops/sec under a perfectly matched all-fill workload. Under a realistic mixed workload (5 tickers, varied prices, 10% cancels) the fill rate is ~35% — passive orders don't always find a cross. The stress test sustains 16M+ ops/sec push throughput across 20M orders.
+
+---
+
+## Development notes
+
+Unit tests and the benchmark harness were scaffolded with AI-assisted development (Claude). The concurrent test suite caught a real use-after-free bug in the lock-free queue: a `compare_exchange_strong` in `pop()` was setting `head = tail`, which was then deleted; subsequent pushes wrote through the freed node, making new nodes permanently unreachable and causing the consumer to spin forever. The bug was isolated by tracing the exact CAS race condition through the memory model, then fixed by removing the erroneous CAS. The benchmark harness also exposed that the matching engine was initially ticker-agnostic (routing all orders to a single book), which was caught when the realistic fill rate was implausibly high — fixed by adding per-ticker book routing with a cancel-routing map.
