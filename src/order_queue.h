@@ -10,14 +10,14 @@
 
 struct Node {
     Order order;
-    Node* next;
+    std::atomic<Node*> next;
     Node() : order(), next(nullptr) {};
     Node(Order&& o) : order(std::move(o)), next(nullptr) {};
 };
 
 class OrderQueue {
 private:
-    Node* head;
+    std::atomic<Node*> head;
     Node* tail;
     Node* stub; // dummy node to simplify push/pop logic
 
@@ -27,7 +27,7 @@ public:
     std::unordered_set<uint64_t> cancelled_orders;
 
 
-    OrderQueue() 
+    OrderQueue();
     bool pop(Order&& item);
     uint64_t push(uint64_t price, uint64_t quantity, std::string ticker, OrderType type);
     void cancel(uint64_t order_id);

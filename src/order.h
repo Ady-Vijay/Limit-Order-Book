@@ -12,7 +12,7 @@ using Nanos = std::chrono::nanoseconds;
 enum class OrderType{Buy, Sell};
 
 struct Order {
-    static inline std::atomic<uint64_t> uniqueOrderID = 0;
+    static inline std::atomic<uint64_t> uniqueOrderID = 1;
 
     uint64_t price;
     uint64_t quantity;

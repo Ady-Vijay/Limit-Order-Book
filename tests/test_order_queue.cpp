@@ -80,7 +80,8 @@ TEST(OrderQueueCancel, CancelledOrderIsNotPopped) {
     q.cancel(id);
 
     Order out;
-    EXPECT_FALSE(q.pop(std::move(out)));
+    q.pop(std::move(out));
+    EXPECT_EQ(out.id, 0);
 }
 
 TEST(OrderQueueCancel, CancelOnlyTargetedOrder) {
@@ -91,8 +92,9 @@ TEST(OrderQueueCancel, CancelOnlyTargetedOrder) {
 
     Order out;
     EXPECT_TRUE(q.pop(std::move(out)));
+    EXPECT_EQ(out.id, 0);
+    q.pop(std::move(out));
     EXPECT_EQ(out.id, id_b);
-    EXPECT_FALSE(q.pop(std::move(out)));
 }
 
 TEST(OrderQueueCancel, CancelTwiceSecondIsNoop) {
@@ -119,8 +121,8 @@ TEST(OrderQueueCancel, CancelMiddleOfQueue) {
 
     Order out;
     q.pop(std::move(out)); EXPECT_EQ(out.id, id_a);
+    q.pop(std::move(out)); EXPECT_EQ(out.id, 0);
     q.pop(std::move(out)); EXPECT_EQ(out.id, id_c);
-    EXPECT_FALSE(q.pop(std::move(out)));
 }
 
 // ── Thread safety ─────────────────────────────────────────────────────────────
