@@ -20,9 +20,6 @@
         if (node == nullptr) {
             return false;
         }
-
-        Node* expected = node;  // save a copy
-        head.compare_exchange_strong(expected, tail);
         item = std::move(node->order);
         if(cancelled_orders.count(item.id)){
             item.id = 0;

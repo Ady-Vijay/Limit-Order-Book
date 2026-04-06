@@ -6,7 +6,8 @@
 class MatchingEngine {
 private:
     OrderQueue& order_queue;
-    OrderBook order_book;
+    std::unordered_map<std::string, OrderBook> order_books;
+    std::unordered_map<uint64_t, std::string> order_id_to_ticker;
     std::atomic<bool> running{true};
 
 public:
@@ -24,16 +25,23 @@ public:
                 to_cancel.swap(order_queue.cancelled_orders);
             }
             for (auto id : to_cancel)
-                order_book.cancel(id);
+                order_books[order_id_to_ticker[id]].cancel(id);
 
             Order order;
             if (order_queue.pop(std::move(order))) {
+                order_id_to_ticker[order.id] = order.ticker;
                 if(!to_cancel.count(order.id)){
-                    order_book.match(std::move(order));
+                    order_books[order.ticker].match(std::move(order));
                 }
             }
         }
     }
 
-    const std::vector<Trade>& trades() const { return order_book.trades; }
+    const std::vector<Trade> trades() const {
+        std::vector<Trade> all_trades;
+        for (const auto& [ticker, book] : order_books) {
+            all_trades.insert(all_trades.end(), book.trades.begin(), book.trades.end());
+        }
+        return all_trades;
+    }
 };

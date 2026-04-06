@@ -27,3 +27,7 @@ add_test_executable(order_tests              tests/test_order.cpp)
 add_test_executable(order_book_tests         tests/test_order_book.cpp)
 add_test_executable(order_queue_tests        tests/test_order_queue.cpp)
 add_test_executable(matching_engine_tests    tests/test_matching_engine.cpp)
+
+add_executable(bench bench/bench.cpp)
+target_include_directories(bench PRIVATE src)
+target_compile_options(bench PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/O2> $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-O2>)
