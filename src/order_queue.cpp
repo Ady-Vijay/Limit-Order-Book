@@ -2,8 +2,6 @@
 
 uint64_t OrderQueue::push(uint64_t price, uint64_t quantity, std::string ticker, OrderType type) {
     Order order(price, quantity, std::move(ticker), type);
-    uint64_t id = order.id;
-    std::lock_guard<std::mutex> lock(mtx);
     queue.push_back(std::move(order));
     order_map[id] = std::prev(queue.end());
     return id;
